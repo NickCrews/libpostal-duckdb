@@ -20,12 +20,4 @@ describe(`libpostal extension`, () => {
             done();
         });
     });
-
-    it('libpostal_openssl_version function should return expected string', function (done) {
-        db.all("SELECT libpostal_openssl_version('Michael') as value;", function (err, res) {
-            if (err) throw err;
-            assert(res[0].value.startsWith('Libpostal Michael, my linked OpenSSL version is OpenSSL'));
-            done();
-        });
-    });
 });

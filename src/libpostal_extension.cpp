@@ -22,26 +22,9 @@ inline void LibpostalScalarFun(DataChunk &args, ExpressionState &state, Vector &
         });
 }
 
-inline void LibpostalOpenSSLVersionScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
-    auto &name_vector = args.data[0];
-    UnaryExecutor::Execute<string_t, string_t>(
-	    name_vector, result, args.size(),
-	    [&](string_t name) {
-			return StringVector::AddString(result, "Libpostal " + name.GetString() +
-                                                     ", my linked OpenSSL version is " +
-                                                     OPENSSL_VERSION_TEXT );;
-        });
-}
-
 static void LoadInternal(DatabaseInstance &instance) {
-    // Register a scalar function
     auto libpostal_scalar_function = ScalarFunction("libpostal", {LogicalType::VARCHAR}, LogicalType::VARCHAR, LibpostalScalarFun);
     ExtensionUtil::RegisterFunction(instance, libpostal_scalar_function);
-
-    // Register another scalar function
-    auto libpostal_openssl_version_scalar_function = ScalarFunction("libpostal_openssl_version", {LogicalType::VARCHAR},
-                                                LogicalType::VARCHAR, LibpostalOpenSSLVersionScalarFun);
-    ExtensionUtil::RegisterFunction(instance, libpostal_openssl_version_scalar_function);
 }
 
 void LibpostalExtension::Load(DuckDB &db) {

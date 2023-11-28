@@ -16,8 +16,3 @@ query I
 SELECT libpostal('Sam');
 ----
 Libpostal Sam 🐥
-
-query I
-SELECT libpostal_openssl_version('Michael');
-----
-<REGEX>:Libpostal Michael, my linked OpenSSL version is OpenSSL.*

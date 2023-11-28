@@ -1,6 +1,6 @@
 #define DUCKDB_EXTENSION_MAIN
 
-#include "quack_extension.hpp"
+#include "libpostal_extension.hpp"
 #include "duckdb.hpp"
 #include "duckdb/common/exception.hpp"
 #include "duckdb/common/string_util.hpp"
@@ -13,21 +13,21 @@
 
 namespace duckdb {
 
-inline void QuackScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
+inline void LibpostalScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
     auto &name_vector = args.data[0];
     UnaryExecutor::Execute<string_t, string_t>(
 	    name_vector, result, args.size(),
 	    [&](string_t name) {
-			return StringVector::AddString(result, "Quack "+name.GetString()+" 🐥");;
+			return StringVector::AddString(result, "Libpostal "+name.GetString()+" 🐥");;
         });
 }
 
-inline void QuackOpenSSLVersionScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
+inline void LibpostalOpenSSLVersionScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
     auto &name_vector = args.data[0];
     UnaryExecutor::Execute<string_t, string_t>(
 	    name_vector, result, args.size(),
 	    [&](string_t name) {
-			return StringVector::AddString(result, "Quack " + name.GetString() +
+			return StringVector::AddString(result, "Libpostal " + name.GetString() +
                                                      ", my linked OpenSSL version is " +
                                                      OPENSSL_VERSION_TEXT );;
         });
@@ -35,32 +35,32 @@ inline void QuackOpenSSLVersionScalarFun(DataChunk &args, ExpressionState &state
 
 static void LoadInternal(DatabaseInstance &instance) {
     // Register a scalar function
-    auto quack_scalar_function = ScalarFunction("quack", {LogicalType::VARCHAR}, LogicalType::VARCHAR, QuackScalarFun);
-    ExtensionUtil::RegisterFunction(instance, quack_scalar_function);
+    auto libpostal_scalar_function = ScalarFunction("libpostal", {LogicalType::VARCHAR}, LogicalType::VARCHAR, LibpostalScalarFun);
+    ExtensionUtil::RegisterFunction(instance, libpostal_scalar_function);
 
     // Register another scalar function
-    auto quack_openssl_version_scalar_function = ScalarFunction("quack_openssl_version", {LogicalType::VARCHAR},
-                                                LogicalType::VARCHAR, QuackOpenSSLVersionScalarFun);
-    ExtensionUtil::RegisterFunction(instance, quack_openssl_version_scalar_function);
+    auto libpostal_openssl_version_scalar_function = ScalarFunction("libpostal_openssl_version", {LogicalType::VARCHAR},
+                                                LogicalType::VARCHAR, LibpostalOpenSSLVersionScalarFun);
+    ExtensionUtil::RegisterFunction(instance, libpostal_openssl_version_scalar_function);
 }
 
-void QuackExtension::Load(DuckDB &db) {
+void LibpostalExtension::Load(DuckDB &db) {
 	LoadInternal(*db.instance);
 }
-std::string QuackExtension::Name() {
-	return "quack";
+std::string LibpostalExtension::Name() {
+	return "libpostal";
 }
 
 } // namespace duckdb
 
 extern "C" {
 
-DUCKDB_EXTENSION_API void quack_init(duckdb::DatabaseInstance &db) {
+DUCKDB_EXTENSION_API void libpostal_init(duckdb::DatabaseInstance &db) {
     duckdb::DuckDB db_wrapper(db);
-    db_wrapper.LoadExtension<duckdb::QuackExtension>();
+    db_wrapper.LoadExtension<duckdb::LibpostalExtension>();
 }
 
-DUCKDB_EXTENSION_API const char *quack_version() {
+DUCKDB_EXTENSION_API const char *libpostal_version() {
 	return duckdb::DuckDB::LibraryVersion();
 }
 }

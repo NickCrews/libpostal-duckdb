@@ -13,10 +13,10 @@ describe(`postal extension`, () => {
         });
     });
 
-    it('postal function should return expected string', function (done) {
-        db.all("SELECT postal('Sam') as value;", function (err, res) {
+    it('parse_address() function should return expected string', function (done) {
+        db.all("SELECT parse_address('123 wallaby way, sydney') as value;", function (err, res) {
             if (err) throw err;
-            assert.deepEqual(res, [{value: "Postal Sam 🐥"}]);
+            assert.deepEqual(res, [{value: "house_number"}]);
             done();
         });
     });

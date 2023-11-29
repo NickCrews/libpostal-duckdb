@@ -13,6 +13,6 @@ require postal
 
 # Confirm the extension works
 query I
-SELECT postal('Sam');
+SELECT parse_address('123 wallaby way, sydney');
 ----
-Postal Sam 🐥
+house_number

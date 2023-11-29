@@ -13,17 +13,6 @@
 namespace duckdb
 {
 
-    inline void PostalScalarFun(DataChunk &args, ExpressionState &state, Vector &result)
-    {
-        auto &name_vector = args.data[0];
-        UnaryExecutor::Execute<string_t, string_t>(
-            name_vector, result, args.size(),
-            [&](string_t name)
-            {
-                return StringVector::AddString(result, "Postal " + name.GetString() + " 🐥");
-            });
-    }
-
     inline void ParseAddress(DataChunk &args, ExpressionState &state, Vector &result)
     {
         libpostal_address_parser_options_t options = libpostal_get_address_parser_default_options();
@@ -45,9 +34,6 @@ namespace duckdb
         {
             exit(EXIT_FAILURE);
         }
-
-        auto postal = ScalarFunction("postal", {LogicalType::VARCHAR}, LogicalType::VARCHAR, PostalScalarFun);
-        ExtensionUtil::RegisterFunction(instance, postal);
 
         auto parse_address = ScalarFunction("parse_address", {LogicalType::VARCHAR}, LogicalType::VARCHAR, ParseAddress);
         ExtensionUtil::RegisterFunction(instance, parse_address);

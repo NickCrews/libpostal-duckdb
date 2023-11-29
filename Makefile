@@ -23,9 +23,9 @@ ifeq ($(GEN),ninja)
 endif
 
 #### Configuration for this extension
-EXTENSION_NAME=LIBPOSTAL
+EXTENSION_NAME=POSTAL
 EXTENSION_FLAGS=\
--DDUCKDB_EXTENSION_NAMES="libpostal" \
+-DDUCKDB_EXTENSION_NAMES="postal" \
 -DDUCKDB_EXTENSION_${EXTENSION_NAME}_PATH="$(PROJ_DIR)" \
 -DDUCKDB_EXTENSION_${EXTENSION_NAME}_LOAD_TESTS=1 \
 -DDUCKDB_EXTENSION_${EXTENSION_NAME}_INCLUDE_PATH="$(PROJ_DIR)src/include" \
@@ -54,7 +54,7 @@ libpostal-configure:
 	sudo make install
 
 #### Main build
-# For regular CLI build, we link the libpostal extension directly into the DuckDB executable
+# For regular CLI build, we link the extension directly into the DuckDB executable
 CLIENT_FLAGS=-DDUCKDB_EXTENSION_${EXTENSION_NAME}_SHOULD_LINK=1
 
 debug:
@@ -88,8 +88,8 @@ test_debug: debug
 	./build/debug/$(TEST_PATH) "$(PROJ_DIR)test/*"
 
 #### Client tests
-DEBUG_EXT_PATH='$(PROJ_DIR)build/debug/extension/libpostal/libpostal.duckdb_extension'
-RELEASE_EXT_PATH='$(PROJ_DIR)build/release/extension/libpostal/libpostal.duckdb_extension'
+DEBUG_EXT_PATH='$(PROJ_DIR)build/debug/extension/postal/postal.duckdb_extension'
+RELEASE_EXT_PATH='$(PROJ_DIR)build/release/extension/postal/postal.duckdb_extension'
 test_js: test_debug_js
 test_debug_js: debug_js
 	cd duckdb/tools/nodejs && ${EXTENSION_NAME}_EXTENSION_BINARY_PATH=$(DEBUG_EXT_PATH) npm run test-path -- "../../../test/nodejs/**/*.js"

@@ -1,6 +1,6 @@
 #define DUCKDB_EXTENSION_MAIN
 
-#include "libpostal_extension.hpp"
+#include "postal_extension.hpp"
 #include "duckdb.hpp"
 #include "duckdb/common/exception.hpp"
 #include "duckdb/common/string_util.hpp"
@@ -12,12 +12,12 @@
 
 namespace duckdb {
 
-inline void LibpostalScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
+inline void PostalScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
     auto &name_vector = args.data[0];
     UnaryExecutor::Execute<string_t, string_t>(
 	    name_vector, result, args.size(),
 	    [&](string_t name) {
-			return StringVector::AddString(result, "Libpostal "+name.GetString()+" 🐥");;
+			return StringVector::AddString(result, "Postal "+name.GetString()+" 🐥");;
         });
 }
 
@@ -43,34 +43,34 @@ static void LoadInternal(DatabaseInstance &instance) {
         exit(EXIT_FAILURE);
     }
 
-    auto libpostal_scalar_function = ScalarFunction("libpostal", {LogicalType::VARCHAR}, LogicalType::VARCHAR, LibpostalScalarFun);
-    ExtensionUtil::RegisterFunction(instance, libpostal_scalar_function);
+    auto f = ScalarFunction("postal", {LogicalType::VARCHAR}, LogicalType::VARCHAR, PostalScalarFun);
+    ExtensionUtil::RegisterFunction(instance, f);
 
-    auto libpostal_parse_address = ScalarFunction("libpostal_parse_address", {LogicalType::VARCHAR}, LogicalType::VARCHAR, ParseAddress);
-    ExtensionUtil::RegisterFunction(instance, libpostal_parse_address);
+    auto f = ScalarFunction("parse_address", {LogicalType::VARCHAR}, LogicalType::VARCHAR, ParseAddress);
+    ExtensionUtil::RegisterFunction(instance, f);
 
     // Teardown (only called once at the end of your program)
     // libpostal_teardown();
     // libpostal_teardown_parser();
 }
 
-void LibpostalExtension::Load(DuckDB &db) {
+void PostalExtension::Load(DuckDB &db) {
 	LoadInternal(*db.instance);
 }
-std::string LibpostalExtension::Name() {
-	return "libpostal";
+std::string PostalExtension::Name() {
+	return "postal";
 }
 
 } // namespace duckdb
 
 extern "C" {
 
-DUCKDB_EXTENSION_API void libpostal_init(duckdb::DatabaseInstance &db) {
+DUCKDB_EXTENSION_API void postal_init(duckdb::DatabaseInstance &db) {
     duckdb::DuckDB db_wrapper(db);
-    db_wrapper.LoadExtension<duckdb::LibpostalExtension>();
+    db_wrapper.LoadExtension<duckdb::PostalExtension>();
 }
 
-DUCKDB_EXTENSION_API const char *libpostal_version() {
+DUCKDB_EXTENSION_API const char *postal_version() {
 	return duckdb::DuckDB::LibraryVersion();
 }
 }

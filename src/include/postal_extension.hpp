@@ -4,7 +4,7 @@
 
 namespace duckdb {
 
-class LibpostalExtension : public Extension {
+class PostalExtension : public Extension {
 public:
 	void Load(DuckDB &db) override;
 	std::string Name() override;

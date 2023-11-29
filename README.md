@@ -26,18 +26,18 @@ The main binaries that will be built are:
 ```sh
 ./build/release/duckdb
 ./build/release/test/unittest
-./build/release/extension/libpostal/libpostal.duckdb_extension
+./build/release/extension/postal/postal.duckdb_extension
 ```
 - `duckdb` is the binary for the duckdb shell with the extension code automatically loaded.
 - `unittest` is the test runner of duckdb. Again, the extension is already linked into the binary.
-- `libpostal.duckdb_extension` is the loadable binary as it would be distributed.
+- `postal.duckdb_extension` is the loadable binary as it would be distributed.
 
 ## Running the extension
 To run the extension code, simply start the shell with `./build/release/duckdb`.
 
-Now we can use the features from the extension directly in DuckDB. The template contains a single scalar function `libpostal()` that takes a string arguments and returns a string:
+Now we can use the features from the extension directly in DuckDB. The template contains a single scalar function `postal()` that takes a string arguments and returns a string:
 ```
-D select libpostal('Jane') as result;
+D select postal('Jane') as result;
 ┌───────────────┐
 │    result     │
 │    varchar    │
@@ -81,6 +81,6 @@ DuckDB. To specify a specific version, you can pass the version instead.
 
 After running these steps, you can install and load your extension using the regular INSTALL/LOAD commands in DuckDB:
 ```sql
-INSTALL libpostal
-LOAD libpostal
+INSTALL postal
+LOAD postal
 ```

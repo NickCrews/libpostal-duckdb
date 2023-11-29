@@ -44,12 +44,12 @@ CLIENT_FLAGS=-DDUCKDB_EXTENSION_${EXTENSION_NAME}_SHOULD_LINK=1
 debug:
 	mkdir -p  build/debug && \
 	cmake $(GENERATOR) $(BUILD_FLAGS) $(CLIENT_FLAGS) -DCMAKE_BUILD_TYPE=Debug -S ./duckdb/ -B build/debug && \
-	cmake --build build/debug --config Debug --parallel 16
+	cmake --build build/debug --config Debug --parallel 10
 
 release:
 	mkdir -p build/release && \
 	cmake $(GENERATOR) $(BUILD_FLAGS)  $(CLIENT_FLAGS)  -DCMAKE_BUILD_TYPE=Release -S ./duckdb/ -B build/release && \
-	cmake --build build/release --config Release --parallel 16
+	cmake --build build/release --config Release --parallel 10
 
 ##### Client build
 JS_BUILD_FLAGS=-DBUILD_NODE=1 -DDUCKDB_EXTENSION_${EXTENSION_NAME}_SHOULD_LINK=0

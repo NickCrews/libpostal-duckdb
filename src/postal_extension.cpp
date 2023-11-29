@@ -15,55 +15,56 @@ namespace duckdb
 
     inline void PostalScalarFun(DataChunk &args, ExpressionState &state, Vector &result)
     {
-    auto &name_vector = args.data[0];
-    UnaryExecutor::Execute<string_t, string_t>(
-	    name_vector, result, args.size(),
+        auto &name_vector = args.data[0];
+        UnaryExecutor::Execute<string_t, string_t>(
+            name_vector, result, args.size(),
             [&](string_t name)
             {
                 return StringVector::AddString(result, "Postal " + name.GetString() + " 🐥");
-        });
-}
+            });
+    }
 
     inline void ParseAddress(DataChunk &args, ExpressionState &state, Vector &result)
     {
-    libpostal_address_parser_options_t options = libpostal_get_address_parser_default_options();
-    auto &text_vector = args.data[0];
-    UnaryExecutor::Execute<string_t, string_t>(
-	    text_vector, result, args.size(),
-	    [&](string_t name) {
-            libpostal_address_parser_response_t *parsed = libpostal_parse_address((char *)"781 Franklin Ave Crown Heights Brooklyn NYC NY 11216 USA", options);
-			auto ret = StringVector::AddString(result, parsed->components[0]);;
-            libpostal_address_parser_response_destroy(parsed);
-            return ret;
-        });
+        libpostal_address_parser_options_t options = libpostal_get_address_parser_default_options();
+        auto &text_vector = args.data[0];
+        UnaryExecutor::Execute<string_t, string_t>(
+            text_vector, result, args.size(),
+            [&](string_t oneline)
+            {
+                libpostal_address_parser_response_t *parsed = libpostal_parse_address((char *)oneline.GetString().c_str(), options);
+                auto ret = StringVector::AddString(result, parsed->labels[0]);
+                libpostal_address_parser_response_destroy(parsed);
+                return ret;
+            });
     }
 
     static void LoadInternal(DatabaseInstance &instance)
     {
         if (!libpostal_setup() || !libpostal_setup_parser())
         {
-        exit(EXIT_FAILURE);
+            exit(EXIT_FAILURE);
+        }
+
+        auto postal = ScalarFunction("postal", {LogicalType::VARCHAR}, LogicalType::VARCHAR, PostalScalarFun);
+        ExtensionUtil::RegisterFunction(instance, postal);
+
+        auto parse_address = ScalarFunction("parse_address", {LogicalType::VARCHAR}, LogicalType::VARCHAR, ParseAddress);
+        ExtensionUtil::RegisterFunction(instance, parse_address);
+
+        // Teardown (only called once at the end of your program)
+        // libpostal_teardown();
+        // libpostal_teardown_parser();
     }
-
-    auto postal = ScalarFunction("postal", {LogicalType::VARCHAR}, LogicalType::VARCHAR, PostalScalarFun);
-    ExtensionUtil::RegisterFunction(instance, postal);
-
-    auto parse_address = ScalarFunction("parse_address", {LogicalType::VARCHAR}, LogicalType::VARCHAR, ParseAddress);
-    ExtensionUtil::RegisterFunction(instance, parse_address);
-
-    // Teardown (only called once at the end of your program)
-    // libpostal_teardown();
-    // libpostal_teardown_parser();
-}
 
     void PostalExtension::Load(DuckDB &db)
     {
-	LoadInternal(*db.instance);
-}
+        LoadInternal(*db.instance);
+    }
     std::string PostalExtension::Name()
     {
-	return "postal";
-}
+        return "postal";
+    }
 
 } // namespace duckdb
 
@@ -72,14 +73,14 @@ extern "C"
 
     DUCKDB_EXTENSION_API void postal_init(duckdb::DatabaseInstance &db)
     {
-    duckdb::DuckDB db_wrapper(db);
-    db_wrapper.LoadExtension<duckdb::PostalExtension>();
-}
+        duckdb::DuckDB db_wrapper(db);
+        db_wrapper.LoadExtension<duckdb::PostalExtension>();
+    }
 
     DUCKDB_EXTENSION_API const char *postal_version()
     {
-	return duckdb::DuckDB::LibraryVersion();
-}
+        return duckdb::DuckDB::LibraryVersion();
+    }
 }
 
 #ifndef DUCKDB_EXTENSION_MAIN

@@ -26,3 +26,9 @@ def test_postal(duckdb_conn):
     duckdb_conn.execute("SELECT postal('Sam') as value;")
     res = duckdb_conn.fetchall()
     assert res[0][0] == "Postal Sam 🐥"
+
+
+def test_parse_address(duckdb_conn):
+    duckdb_conn.execute("SELECT parse_address('123 wallaby way, sydney') as value;")
+    res = duckdb_conn.fetchall()
+    assert res[0][0] == "house_number"

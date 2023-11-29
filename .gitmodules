@@ -6,4 +6,4 @@
 [submodule "libpostal"]
 	path = libpostal
 	url = https://github.com/openvenues/libpostal
-	branch = main
+	branch = master

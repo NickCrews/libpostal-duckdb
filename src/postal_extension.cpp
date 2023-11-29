@@ -12,6 +12,10 @@
 
 namespace duckdb
 {
+    // const auto RETURN_TYPE = LogicalType::LIST(LogicalType::STRUCT({{
+    //     {"token", LogicalType::VARCHAR},
+    //     {"label", LogicalType::VARCHAR},
+    // }}));
 
     inline void ParseAddress(DataChunk &args, ExpressionState &state, Vector &result)
     {
@@ -22,6 +26,14 @@ namespace duckdb
             [&](string_t oneline)
             {
                 libpostal_address_parser_response_t *parsed = libpostal_parse_address((char *)oneline.GetString().c_str(), options);
+                // Something like:
+                // ret = list<struct> of length parsed->num_components
+                // for (size_t i = 0; i < parsed->num_components; i++)
+                // {
+                //     ret[i].token = parsed->components[i];
+                //     ret[i].label = parsed->labels[i];
+                // }
+                // return ret;
                 auto ret = StringVector::AddString(result, parsed->labels[0]);
                 libpostal_address_parser_response_destroy(parsed);
                 return ret;
@@ -36,6 +48,7 @@ namespace duckdb
         }
 
         auto parse_address = ScalarFunction("parse_address", {LogicalType::VARCHAR}, LogicalType::VARCHAR, ParseAddress);
+        // auto parse_address = ScalarFunction("parse_address", {LogicalType::VARCHAR}, RETURN_TYPE, ParseAddress);
         ExtensionUtil::RegisterFunction(instance, parse_address);
 
         // Teardown (only called once at the end of your program)

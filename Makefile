@@ -41,6 +41,8 @@ LIBPOSTAL_CONFIGURE_FLAGS=--datadir=$(PROJ_DIR).libpostal_data
 # I'm on apple M1, libpostal says need to use `--disable-sse2`
 LIBPOSTAL_CONFIGURE_FLAGS+= --disable-sse2
 
+N_CORES:=$(shell sysctl -n hw.ncpu)
+
 
 #### Prepare libpostal submodule
 # As of 2023-11-28, first need to install build deps as described at
@@ -50,7 +52,7 @@ libpostal-configure:
 	cd libpostal && \
 	./bootstrap.sh && \
 	./configure $(LIBPOSTAL_CONFIGURE_FLAGS) && \
-	make -j10 && \
+	make -j $(N_CORES) && \
 	sudo make install
 
 #### Main build
@@ -60,12 +62,12 @@ CLIENT_FLAGS=-DDUCKDB_EXTENSION_${EXTENSION_NAME}_SHOULD_LINK=1
 debug:
 	mkdir -p  build/debug && \
 	cmake $(GENERATOR) $(BUILD_FLAGS) $(CLIENT_FLAGS) -DCMAKE_BUILD_TYPE=Debug -S ./duckdb/ -B build/debug && \
-	cmake --build build/debug --config Debug --parallel 10
+	cmake --build build/debug --config Debug --parallel $(N_CORES)
 
 release:
 	mkdir -p build/release && \
 	cmake $(GENERATOR) $(BUILD_FLAGS)  $(CLIENT_FLAGS)  -DCMAKE_BUILD_TYPE=Release -S ./duckdb/ -B build/release && \
-	cmake --build build/release --config Release --parallel 10
+	cmake --build build/release --config Release --parallel $(N_CORES)
 
 ##### Client build
 JS_BUILD_FLAGS=-DBUILD_NODE=1 -DDUCKDB_EXTENSION_${EXTENSION_NAME}_SHOULD_LINK=0

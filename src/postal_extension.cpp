@@ -43,11 +43,11 @@ static void LoadInternal(DatabaseInstance &instance) {
         exit(EXIT_FAILURE);
     }
 
-    auto f = ScalarFunction("postal", {LogicalType::VARCHAR}, LogicalType::VARCHAR, PostalScalarFun);
-    ExtensionUtil::RegisterFunction(instance, f);
+    auto postal = ScalarFunction("postal", {LogicalType::VARCHAR}, LogicalType::VARCHAR, PostalScalarFun);
+    ExtensionUtil::RegisterFunction(instance, postal);
 
-    auto f = ScalarFunction("parse_address", {LogicalType::VARCHAR}, LogicalType::VARCHAR, ParseAddress);
-    ExtensionUtil::RegisterFunction(instance, f);
+    auto parse_address = ScalarFunction("parse_address", {LogicalType::VARCHAR}, LogicalType::VARCHAR, ParseAddress);
+    ExtensionUtil::RegisterFunction(instance, parse_address);
 
     // Teardown (only called once at the end of your program)
     // libpostal_teardown();

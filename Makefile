@@ -44,11 +44,13 @@ LIBPOSTAL_CONFIGURE_FLAGS+= --disable-sse2
 N_CORES:=$(shell sysctl -n hw.ncpu)
 
 
-#### Prepare libpostal submodule
+#### Configure, build, and install libpostal
 # As of 2023-11-28, first need to install build deps as described at
 # https://github.com/openvenues/libpostal
 # For MacOS: brew install curl autoconf automake libtool pkg-config
-libpostal-configure:
+#
+# After this should be able to find libpostal with `pkg-config` in cmake
+libpostal-build:
 	cd libpostal && \
 	./bootstrap.sh && \
 	./configure $(LIBPOSTAL_CONFIGURE_FLAGS) && \

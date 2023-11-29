@@ -24,6 +24,8 @@ D select parse_address('123 Wallaby Way, Sydney, Austra') as result;
 ### Managing dependencies
 
 `libpostal` is not included in vcpkg, so I included it via git submodules.
+First step is to build and install `libpostal` with `make libpostal-build`.
+Then, continue with the rest of the following steps.
 
 ### Build steps
 Now to build the extension, run:

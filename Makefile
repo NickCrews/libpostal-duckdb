@@ -37,6 +37,22 @@ EXTRA_EXTENSIONS_FLAG=-DBUILD_EXTENSIONS="tpch;visualizer"
 BUILD_FLAGS=-DEXTENSION_STATIC_BUILD=1 $(EXTENSION_FLAGS) ${EXTRA_EXTENSIONS_FLAG} $(OSX_BUILD_FLAG) $(TOOLCHAIN_FLAGS)
 CLIENT_FLAGS:=
 
+LIBPOSTAL_CONFIGURE_FLAGS=--datadir=$(PROJ_DIR).libpostal_data
+# I'm on apple M1, libpostal says need to use `--disable-sse2`
+LIBPOSTAL_CONFIGURE_FLAGS+= --disable-sse2
+
+
+#### Prepare libpostal submodule
+# As of 2023-11-28, first need to install build deps as described at
+# https://github.com/openvenues/libpostal
+# For MacOS: brew install curl autoconf automake libtool pkg-config
+libpostal-configure:
+	cd libpostal && \
+	./bootstrap.sh && \
+	./configure $(LIBPOSTAL_CONFIGURE_FLAGS) && \
+	make -j10 && \
+	sudo make install
+
 #### Main build
 # For regular CLI build, we link the libpostal extension directly into the DuckDB executable
 CLIENT_FLAGS=-DDUCKDB_EXTENSION_${EXTENSION_NAME}_SHOULD_LINK=1

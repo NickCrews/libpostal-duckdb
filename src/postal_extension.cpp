@@ -19,13 +19,13 @@ namespace duckdb
 
     inline void ParseAddress(DataChunk &args, ExpressionState &state, Vector &result)
     {
-        libpostal_address_parser_options_t options = libpostal_get_address_parser_default_options();
+        auto options = libpostal_get_address_parser_default_options();
         auto &text_vector = args.data[0];
         UnaryExecutor::Execute<string_t, string_t>(
             text_vector, result, args.size(),
             [&](string_t oneline)
             {
-                libpostal_address_parser_response_t *parsed = libpostal_parse_address((char *)oneline.GetString().c_str(), options);
+                auto *parsed = libpostal_parse_address((char *)oneline.GetString().c_str(), options);
                 // Something like:
                 // ret = list<struct> of length parsed->num_components
                 // for (size_t i = 0; i < parsed->num_components; i++)

@@ -4,6 +4,12 @@ This repository is based on https://github.com/duckdb/extension-template, check 
 
 ---
 
+Note: A peer project is https://github.com/Maxxen/duckdb-postal, which currently does this a lot better than this repo.
+I probably develop off of that version if I start working
+on this again. But [there are some problems with global state in libpostal](https://github.com/Maxxen/duckdb-postal/issues/1) that
+don't play well with DuckDB that probably need to get resolved first, and that looks like a lot of work, so I don't have any short-term
+plans to work more on this.
+
 This project is a DuckDB extension that wraps the
 [libpostal](https://github.com/openvenues/libpostal) C library,
 allowing you to parse and normalize addresses from within DuckDB.
